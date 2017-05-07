@@ -11,7 +11,12 @@ h5,
 h6 {
   padding: 0;
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "Lato", sans-serif;
+}
+
+body {
+    font-weight: 300;
+    color: white;
 }
 
 .clear-fix {
@@ -25,16 +30,15 @@ h6 {
 }
 
 h1 {
-  font-size: 40px;
+  font-size: 36px;
   color: #f5a623;
   line-height: 48px;
-  display: inline;
 }
 
 h2 {
   font-weight: bold;
   font-size: 24px;
-  color: #999;
+  color: #bcbbbb;
   line-height: 29px;
   padding: 10px;
 }
@@ -65,7 +69,7 @@ h5 {
 .date-text {
   font-style: italic;
   font-size: 14px;
-  color: #999;
+  color: white;
   line-height: 16px;
   float: left;
 }
@@ -100,8 +104,9 @@ a {
 }
 
 #skills-h3 {
-  color: #f5ae23;
+  color: white;
   display: none;
+  text-align: left;
 }
 
 .orange {
@@ -125,6 +130,10 @@ a {
 
 .dark-gray {
   background-color: #4a4a4a;
+}
+
+.dark-blue {
+  background-color: #213d48; 
 }
 
 /* TODO: Replace with image later */
@@ -174,6 +183,54 @@ span {
 #lets-connect {
   text-align: center;
 }
+
+/* My over-rides */
+    /*added for zocial*/
+    [class*="zocial-"]:before {
+      font-family: "zocial", sans-serif;
+      color: white;
+    }
+
+    #projects > *:not(h2), #workExperience > *:not(h2), #education > *:not(h2):not(.location-text) {
+      padding-left: 7%;
+    }
+
+    #education em {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .education-entry > h3 {
+      padding: 10px 0;
+    }
+
+    #projects p {
+      color: white;
+    }
+
+    body, #header, #workExperience, #education {
+      background-color: #213d48;
+    }
+
+    .work-entry p {
+      color: white;
+    }
+
+    .contact-link-item {
+      margin: 0 5px 0;
+      display: inline;
+    }
+
+    h1 , h3 {
+      color: white;
+    }
+
+    h1, h1+h3 {
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+/* end overrides */
 
 /* Media queries to handle various device widths */
 
