@@ -24,11 +24,9 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
     <!-- Tells the browser what the title of this page should be. -->
     <title>Jonathan Chaplin's Resume : Front-End Web Developer</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:100,300" rel="stylesheet">
-    <link href="http://weloveiconfonts.com/api/?family=zocial" rel="stylesheet">
     <!-- Load the page styles. -->
     <link href="css/style.css" rel="stylesheet">
-
+    <link href="./css/zocial.css" rel="stylesheet">
 
     <!--
   Uncomment the <script> tag below when you're ready to add an interactive Google Map to your resume!
@@ -41,7 +39,7 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
 </head>
 
 <body>
-    <div id="main">
+    <main id="main">
 
         <!--
     Everything from here to the <script> tag below is the skeleton of your
@@ -49,28 +47,28 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
     resume below. You can pretty easily figure out what each section will
     display by looking at the id or at what's written between the <h2> tags.
     -->
-        <div id="header" class="center-content clear-fix">
+        <header id="header" class="center-content clear-fix">
             <ul id="topContacts" class="flex-box"></ul>
-        </div>
-        <div style="clear: both;"></div>
-        <div id="workExperience" class="gray">
+        </header>
+        <section style="clear: both;"></section>
+        <section id="workExperience" class="gray">
             <h2>Work Experience</h2>
-        </div>
-        <div id="projects">
+        </section>
+        <section id="projects">
             <h2>Projects</h2>
-        </div>
-        <div id="education" class="gray">
+        </section>
+        <section id="education" class="gray">
             <h2>Education</h2>
-        </div>
-        <div id="mapDiv">
+        </section>
+        <section id="mapDiv">
             <h2>Where I've Lived and Worked</h2>
-        </div>
-        <div id="lets-connect">
+        </section>
+        <section id="lets-connect">
             <h2 class="dark-blue center-text">Let's Connect</h2>
             <ul id="footerContacts" class="flex-box">
             </ul>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- "HTML is loaded by the browser in the order it appears in the file. If the JavaScript is loaded first and it is supposed to affect the HTML below it, it might not work, as the JavaScript would be loaded before the HTML it is supposed to work on. Therefore, putting JavaScript near the bottom of the HTML page is often the best strategy."
   https://developer.mozilla.org/en-US/Learn/Getting_started_with_the_web/JavaScript_basics -->
@@ -120,6 +118,14 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
         $(document).click(function() {
             logClicks(window.event.pageX, window.event.pageY);
         });
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
+    <script>
+      WebFont.load({
+        google: {
+          families: ['Lato:100,300']
+        }
+      });
     </script>
 </body>
 

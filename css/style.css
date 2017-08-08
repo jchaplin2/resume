@@ -157,6 +157,11 @@ a {
   padding: 10px;
 }
 
+.flex-item {
+  padding: 2px 0px 2px;
+}
+
+
 .center-content {
   padding: 2.5% 5%;
 }
