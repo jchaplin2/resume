@@ -162,7 +162,8 @@ function initializeMap() {
         var marker = new google.maps.Marker({
             map: map,
             position: placeData.geometry.location,
-            title: name
+            title: name,
+            animation: google.maps.Animation.DROP
         });
 
         // infoWindows are the little helper windows that open when you click
@@ -174,7 +175,7 @@ function initializeMap() {
 
         // hmmmm, I wonder what this is about...
         google.maps.event.addListener(marker, 'click', function() {
-            infoWindow.open(map, marker);
+            populateInfoWindow (map, marker);
         });
 
         // this is where the pin actually gets added to the map.
@@ -260,3 +261,31 @@ var socialMediaLinkMap = {
     "linkedin": "https://www.linkedin.com/in/jrchaplin/",
     "location": "#"
 };
+
+var infoWin = new google.maps.InfoWindow();
+
+function populateInfoWindow (map, marker) {
+        // Check to make sure the infoWin is not already opened on this marker.
+        if (infoWin.marker !== marker) {
+            // Clear the infoWin content to give the streetview time to load.
+            infoWin.setContent('');
+            infoWin.marker = marker;
+            // Make sure the marker property is cleared if the infoWin is closed.
+            infoWin.addListener('closeclick', function() {
+                infoWin.marker = null;
+            });
+        }
+
+        if (marker.getAnimation() !== null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            window.setTimeout(function(){
+                marker.setAnimation(null);
+            }, 1400);
+        }
+
+        infoWin.setContent('<strong class="infoHeader">' + infoWin.marker.title + '</strong>');
+
+        infoWin.open(map, marker);
+}
