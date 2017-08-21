@@ -3,10 +3,6 @@
 <!--
 This is an HTML document. It contains information about how elements in the website
 are arranged. In other words, it describes the layout of a website.
-
-I can't wait to see the resumes you put together!
-
-Cameron Pittman, Udacity Course Developer
 -->
 
 <!--
@@ -17,25 +13,13 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
 <html>
 
 <head>
-
-    <!-- This tells the browser how to read the document. -->
     <meta charset="utf-8">
-
-    <!-- Tells the browser what the title of this page should be. -->
     <title>Jonathan Chaplin's Resume : Front-End Web Developer</title>
-
-    <!-- Load the page styles. -->
     <link href="css/style.css" rel="stylesheet">
     <link href="./css/zocial.css" rel="stylesheet">
-
-    <!--
-  Uncomment the <script> tag below when you're ready to add an interactive Google Map to your resume!
-  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js" onerror="loadError()" > </script>
     <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCee4T47HDTSz-159WzySEB_2R8xAgkUSk"></script>
-
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <style>
-    </style>
 </head>
 
 <body>
@@ -47,25 +31,79 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
     resume below. You can pretty easily figure out what each section will
     display by looking at the id or at what's written between the <h2> tags.
     -->
-        <header id="header" class="center-content clear-fix">
-            <ul id="topContacts" class="flex-box"></ul>
+        <header id="header" class="center-content clear-fix" data-bind="with: bio">
+            <ul id="topContacts" class="flex-box" data-bind="foreach: contacts">
+              <li data-bind="attr : {class : className}">
+                <a href="" class="white-text contact-link-item" target="_blank" data-bind="attr:{href : url}, text:name"></a>
+              </li>
+            </ul>
+            <img data-bind="attr: { src: biopic}" src="" class="biopic" />
+            <h1 id="name" data-bind="text: name">  </h1>
+            <h3 data-bind="text: role"> </h3>
+            <hr>
+            <span class="welcome-message" data-bind="text: welcomeMessage"> </span>
+            <h3 id="skills-h3">Skills at a Glance:</h3>
+            <ul id="skills" class="flex-column">
+              <li class="flex-item"> Languages <span class="white-text" data-bind="text: languages"> </span> </li>
+              <li class="flex-item"> Frameworks/Libraries <span class="white-text" data-bind="text: libraries"> </span> </li>
+              <li class="flex-item"> Other <span class="white-text" data-bind="text: other"> </span> </li>
+              <li class="flex-item"> Version Control <span class="white-text" data-bind="text: versionControl"> </span> </li>
+              <li class="flex-item"> Editors <span class="white-text" data-bind="text: editors"> </span> </li>
+            </ul>
         </header>
         <section style="clear: both;"></section>
-        <section id="workExperience" class="gray">
-            <h2>Work Experience</h2>
+
+        <section id="workExperience"  >
+          <h2>Work Experience</h2>
+          <!-- ko foreach: jobs-->
+          <div class="work-entry">
+            <a href="#" data-bind="text : jobTitle"> </a>
+            <div class="date-text" data-bind="text : dates"> </div>
+            <div class="location-text" data-bind="text : location"> </div>
+            <br/>
+            <p class="description" data-bind="text : description"></p>
+          </div>
+          <!-- /ko -->
         </section>
-        <section id="projects">
-            <h2>Projects</h2>
+        <section id="projects" >
+          <h2> Projects </h2>
+          <!-- ko foreach: projects -->
+            <a href="#" data-bind="text: title">  </a>
+            <div class="date-text" data-bind="text : dates"> </div>
+            <br/>
+            <p data-bind="text : description"> </p>
+            <img src="images/197x148.gif" />
+          <!-- /ko --> 
         </section>
         <section id="education" class="gray">
-            <h2>Education</h2>
+          <h2>Education</h2>
+          <div class="education-entry" data-bind="with: education">
+            <!-- ko foreach: schools -->
+              <a href="#" data-bind="text: title">  </a>
+              <div class="date-text" data-bind="text: dates" ></div>
+              <div class="location-text" data-bind="text: location"></div>
+              <br>
+              <em data-bind="text: majors"><br>Major: </em>
+            <!-- /ko -->
+            <h3> Online Courses </h3>
+            <!-- ko foreach: onlineCourses -->
+              <a href="#" data-bind="text: title">  </a>
+              <div class="date-text" data-bind="text: dates" ></div>
+              <br>
+              <a href="#" data-bind="text: url">  </a>
+            <!-- /ko -->
+          </div>
         </section>
+
         <section id="mapDiv">
             <h2>Where I've Lived and Worked</h2>
         </section>
-        <section id="lets-connect">
+        <section id="lets-connect" data-bind="with: bio">
             <h2 class="dark-blue center-text">Let's Connect</h2>
-            <ul id="footerContacts" class="flex-box">
+            <ul id="footerContacts" class="flex-box" data-bind="foreach: contacts">
+              <li data-bind="attr : {class : className}">
+                <a href="" class="white-text contact-link-item" target="_blank" data-bind="attr:{href : url}, text:name"></a>
+              </li>
             </ul>
         </section>
     </main>
@@ -91,9 +129,6 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
   -->
     <script src="js/jQuery.js"></script>
 
-    <!-- More on helper.js in the class -->
-    <script src="js/helper.js"></script>
-
     <!--
   The next line tells the browser where to download the JavaScript file you'll be
   writing. In resumeBuilder.js, you'll be writing code that builds the resume
@@ -110,15 +145,6 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
   course.
   -->
 
-    <script>
-        $(document).ready(function() {
-            displayInformation();
-        });
-
-        $(document).click(function() {
-            logClicks(window.event.pageX, window.event.pageY);
-        });
-    </script>
     <script src="http://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
     <script>
       WebFont.load({
@@ -126,7 +152,9 @@ need to load. You'll see a lot of <link>s to CSS files for styles and
           families: ['Lato:100,300']
         }
       });
+      $(document).ready(function() {
+          initResume();
+      });
     </script>
 </body>
-
 </html>

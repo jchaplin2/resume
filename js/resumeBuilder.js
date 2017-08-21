@@ -1,281 +1,406 @@
-var bio = {
-    "name": "Jonathan Chaplin",
-    "role": "Front-End Web Developer",
-    "contacts": {
-        "mobile": "908-XXX-XXXX",
-        "email": "jchaplin@gmail.com",
-        "twitter": "jchaplin2",
-        "github": "jchaplin2",
-        "linkedin": "jrchaplin",
-        "location": "Weehawken, NJ"
-    },
-    "skills": {
-        "Languages": [
+var resume, googleMap = '<div id="map"></div>';
+/*
+This is the fun part. Here's where we generate the custom Google Map for the website.
+See the documentation below for more details.
+https://developers.google.com/maps/documentation/javascript/reference
+*/
+var map; // declares a global map variable
+
+
+/*
+Start here! initializeMap() is called when page is loaded.
+*/
+function initializeMap() {
+
+    var locations;
+
+    var mapOptions = {
+        disableDefaultUI: true
+    };
+
+    /*
+    For the map to be displayed, the googleMap var must be
+    appended to #mapDiv in resumeBuilder.js.
+    */
+    map = new google.maps.Map(document.querySelector('#map'), mapOptions);
+
+    /*
+    locationFinder() returns an array of every location string from the JSONs
+    written for bio, education, and work.
+    */
+    function locationFinder() {
+
+        // initializes an empty array
+        var locations = [];
+
+        // adds the single location property from bio to the locations array
+        //TODO : JC add these back.
+        locations.push(resume.bio.contacts[4].name);
+
+        // iterates through school locations and appends each location to
+        // the locations array. Note that forEach is used for array iteration
+        // as described in the Udacity FEND Style Guide:
+        // https://udacity.github.io/frontend-nanodegree-styleguide/javascript.html#for-in-loop
+
+        locations.push(resume.education().schools()[0].location);
+
+        // iterates through work locations and appends each location to
+        // the locations array. Note that forEach is used for array iteration
+        // as described in the Udacity FEND Style Guide:
+        // https://udacity.github.io/frontend-nanodegree-styleguide/javascript.html#for-in-loop
+
+        //TODO : JC add these back.
+        resume.jobs().forEach(function(job) {
+            locations.push(job.location);
+        });
+
+        return locations;
+    }
+
+    /*
+    createMapMarker(placeData) reads Google Places search results to create map pins.
+    placeData is the object returned from search results containing information
+    about a single location.
+    */
+    function createMapMarker(placeData) {
+
+        // The next lines save location data from the search result object to local variables
+        var lat = placeData.geometry.location.lat(); // latitude from the place service
+        var lon = placeData.geometry.location.lng(); // longitude from the place service
+        var name = placeData.formatted_address; // name of the place from the place service
+        var bounds = window.mapBounds; // current boundaries of the map window
+
+        // marker is an object with additional data about the pin for a single location
+        var marker = new google.maps.Marker({
+            map: map,
+            position: placeData.geometry.location,
+            title: name,
+            animation: google.maps.Animation.DROP
+        });
+
+        // infoWindows are the little helper windows that open when you click
+        // or hover over a pin on a map. They usually contain more information
+        // about a location.
+        var infoWindow = new google.maps.InfoWindow({
+            content: name
+        });
+
+        // hmmmm, I wonder what this is about...
+        google.maps.event.addListener(marker, 'click', function() {
+            populateInfoWindow (map, marker);
+        });
+
+        // this is where the pin actually gets added to the map.
+        // bounds.extend() takes in a map location object
+        bounds.extend(new google.maps.LatLng(lat, lon));
+        // fit the map to the new marker
+        map.fitBounds(bounds);
+        // center the map
+        map.setCenter(bounds.getCenter());
+    }
+
+    /*
+    callback(results, status) makes sure the search returned results for a location.
+    If so, it creates a new map marker for that location.
+    */
+    function callback(results, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+            createMapMarker(results[0]);
+        }
+    }
+
+    /*
+    pinPoster(locations) takes in the array of locations created by locationFinder()
+    and fires off Google place searches for each location
+    */
+    function pinPoster(locations) {
+
+        // creates a Google place search service object. PlacesService does the work of
+        // actually searching for location data.
+        var service = new google.maps.places.PlacesService(map);
+
+        // Iterates through the array of locations, creates a search object for each location
+        locations.forEach(function(place) {
+            // the search request object
+            var request = {
+                query: place
+            };
+
+            // Actually searches the Google Maps API for location data and runs the callback
+            // function with the search results after each search.
+            service.textSearch(request, callback);
+        });
+    }
+
+    // Sets the boundaries of the map based on pin locations
+    window.mapBounds = new google.maps.LatLngBounds();
+
+    // locations is an array of location strings returned from locationFinder()
+    locations = locationFinder();
+
+    // pinPoster(locations) creates pins on the map for each location in
+    // the locations array
+    pinPoster(locations);
+
+}
+
+/*
+Uncomment the code below when you're ready to implement a Google Map!
+*/
+
+// Calls the initializeMap() function when the page loads
+window.addEventListener('load', initializeMap);
+
+// Vanilla JS way to listen for resizing of the window
+// and adjust map bounds
+window.addEventListener('resize', function(e) {
+    //Make sure the map bounds get updated on page resize
+    map.fitBounds(mapBounds);
+});
+
+var infoWin = new google.maps.InfoWindow();
+
+function populateInfoWindow (map, marker) {
+        // Check to make sure the infoWin is not already opened on this marker.
+        if (infoWin.marker !== marker) {
+            // Clear the infoWin content to give the streetview time to load.
+            infoWin.setContent('');
+            infoWin.marker = marker;
+            // Make sure the marker property is cleared if the infoWin is closed.
+            infoWin.addListener('closeclick', function() {
+                infoWin.marker = null;
+            });
+        }
+
+        if (marker.getAnimation() !== null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            window.setTimeout(function(){
+                marker.setAnimation(null);
+            }, 1400);
+        }
+
+        infoWin.setContent('<strong class="infoHeader">' + infoWin.marker.title + '</strong>');
+
+        infoWin.open(map, marker);
+}
+
+var Resume = function() {
+    "use strict";
+
+    this.initializeJobs = function(){
+        var firstJob = new WorkLocation({
+            "title": "Software Developer",
+            "employer": "Financial Sciences",
+            "dates": "2/2005 - Current",
+            "location": "Jersey City, NJ",
+            "description": "I'm a full stack web developer who spends much of his time developing and enhancing applications and technical processes. Overall, I've worked on functional development and implementation of trade managers and reporting tools as part of fixed income, market data and cash management applications. My primary skills are Javascript, HTML, CSS, SQL and Java."
+        });
+
+        var secondJob = new WorkLocation({
+            "title": "Software Developer",
+            "employer": "Hertz",
+            "dates": "1/2003 - 9/2003",
+            "location": "Park Ridge, NJ",
+            "description": "Updated and maintained company intranet and internet sites using Coldfusion, HTML, CSS, and JS."
+        });
+
+        var thirdJob = new WorkLocation({
+            "title": "Software Development Intern",
+            "employer": "Citigroup",
+            "dates": "5/2001 - 9/2001",
+            "location": "Weehawken, NJ",
+            "description": "Created and maintained company intranet and site using Coldfusion, HTML, CSS, and JS."
+        });
+
+        this.jobs = ko.observableArray([firstJob, secondJob, thirdJob]);
+    };
+
+    var WorkLocation = function(info) {
+        this.title = ko.observable(info.title);
+        this.employer = ko.observable(info.employer);
+        this.jobTitle = ko.computed(function(){
+                return this.title() + " - " + this.employer();
+        }, this);
+        this.dates = info.dates;
+        this.location = info.location;
+        this.description = info.description;
+    };
+
+    this.initializeProjects = function(){
+        var firstProject = new Project({
+            "title": "Build a Portfolio Site",
+            "dates": "2017",
+            "description": "A site to display all my projects.",
+            "images": ["images/197x148.gif"]
+        });
+
+        var secondProject = new Project({
+            "title": "Interactive Resume",
+            "dates": "2017",
+            "description": "A resume to display my projects and work history.",
+            "images": ["images/197x148.gif"]
+        });
+
+        var thirdProject = new Project({
+            "title": "Classic Arcade Game Clone",
+            "dates": "2017",
+            "description": "A clone of a classic arcade game.",
+            "images": ["images/197x148.gif"]
+        });
+
+        var fourthProject = new Project({
+            "title": "Website Optimization",
+            "dates": "2017",
+            "description": "Optimizing my portfolio site.",
+            "images": ["images/197x148.gif"]
+        });
+
+        var fifthProject = new Project({
+            "title": "Neighborhood Map",
+            "dates": "2017",
+            "description": "A map of my neighborhood.",
+            "images": ["images/197x148.gif"]
+        });
+
+        var sixthProject = new Project({
+            "title": "Feed Reader Testing",
+            "dates": "2017",
+            "description": "Automated testing of a feed reader.",
+            "images": ["images/197x148.gif"]
+        });
+
+        this.projects = ko.observableArray([firstProject, secondProject, thirdProject, fourthProject, fifthProject, sixthProject]);
+    };
+
+    var Project = function(info) {
+        this.title = info.title;
+        this.dates = info.dates;
+        this.description = info.description;
+        this.images = info.images;
+    };
+
+    this.initializeEducation = function() {
+        var firstCollege = new College({
+            "name": "Stevens Institute of Technology",
+            "degree": "Bachelor's of Science",
+            "majors": ["Computer Science"],
+            "dates": "1999 - 2005",
+            "location": "Hoboken, NJ",
+            "url": "http://www.stevens.edu"
+        });
+
+        var firstOnlineCourse = new OnlineCourse({
+            "name": "Front End Web Developer Nanodegree",
+            "school": "Udacity",
+            "dates": "2017",
+            "url": "https://www.udacity.com/course/front-end-web-developer-nanodegree--nd001"
+        });
+
+        var secondOnlineCourse = new OnlineCourse({
+            "name": "Dive Deeper Into CSS",
+            "school": "Noble Desktop",
+            "dates": "2016",
+            "url": "https://www.nobledesktop.com/classes/web-development-level2"
+        });
+
+        var schools = ko.observableArray([firstCollege]);
+        var onlineCourses = ko.observableArray([firstOnlineCourse, secondOnlineCourse]);
+        this.education = ko.observable({
+            "schools" : schools,
+            "onlineCourses": onlineCourses
+        });
+    };
+
+    var College = function(info) {
+        this.name = ko.observable(info.name);
+        this.degree = ko.observable(info.degree);
+        this.title = ko.computed(function(){
+                return this.name() + " - " + this.degree();
+        }, this);
+        this.majors = info.majors;
+        this.dates = info.dates;
+        this.location = info.location;
+        this.url = info.url;
+    };
+
+    var OnlineCourse = function(info) {
+        this.name = ko.observable(info.name);
+        this.school = ko.observable(info.school);
+        this.title = ko.computed(function(){
+                return this.name() + " - " + this.school();
+        }, this);
+        this.dates = info.dates;
+        this.url = info.url;
+    };
+
+    this.initializeBio = function(){
+        var bio = new Bio({
+            "name": "Jonathan Chaplin",
+            "role": "Front-End Web Developer",
+            "welcomeMessage": "My Resume",
+            "biopic":"images/jonathan_chaplin.jpg"
+        });
+
+        this.bio = bio;
+    };
+
+    var Bio = function(info) {
+        this.name = ko.observable(info.name);
+        this.role = ko.observable(info.role);
+        this.welcomeMessage = ko.observable(info.welcomeMessage);
+        this.biopic = ko.observable(info.biopic);
+        this.languages = ko.observableArray([
             "HTML",
             "JavaScript",
             "CSS",
             "Java",
             "JQuery",
             "SQL"
-        ],
-        "Frameworks/libraries": [
+        ]);
+        this.libraries = ko.observableArray([
             "jQuery",
-            "Knockout.js",
-            "Backbone JS",
+            "Knockout",
+            "Backbone",
             "Bootstrap",
             "Jasmine",
             "Grunt"
-        ],
-        "Other": [
+        ]);
+        this.other = ko.observableArray([
             "AJAX",
             "Responsive Design",
             "Unix",
             "Linux",
             "Windows 10",
-            "Microsoft Office",
             "Oracle 11g",
-        ],
-        "Version-control": [
+        ]);
+        this.versionControl = ko.observableArray([
             "Git",
             "CVS"
-        ],
-        "Editors": [
+        ]);
+        this.editors = ko.observableArray([
             "Sublime Text"
-        ]
-    },
-    "biopic": "images/jonathan_chaplin.jpg",
-    "welcomeMessage": "My Resume"
+        ]);
+        this.contacts = [
+            {"name" : "jchaplin@gmail.com", "url":"mailTo:jchaplin@gmail.com", "className":"flex-item zocial-gmail"},
+            {"name" : "jchaplin2", "url":"https://twitter.com/jchaplin2", "className":"flex-item zocial-twitter"},
+            {"name" : "jchaplin2", "url":"https://github.com/jchaplin2", "className":"flex-item zocial-github"},
+            {"name" : "jrchaplin", "url":"https://www.linkedin.com/in/jrchaplin/", "className":"flex-item zocial-linkedin"},
+            {"name" : "Weehawken, NJ", "url":"#", "class":"flex-item zocial-pinboard", "className":"flex-item zocial-pinboard"},
+        ];
+    };
+
+    this.initializeJobs();
+    this.initializeProjects();
+    this.initializeEducation();
+    this.initializeBio();
 };
 
-bio.display = function() {
-    "use strict";
-    var formattedBioPic = HTMLbioPic.replace("%data%", bio.biopic);
-    $("#header").append(formattedBioPic);
 
-    var newHeader = HTMLheaderName.replace("%data%", bio.name);
-    $("#header").append(newHeader);
-
-    var newRole = HTMLheaderRole.replace("%data%", bio.role);
-    $("#header").append(newRole);
-
-    var formattedWelcomeMsg = HTMLwelcomeMsg.replace("%data%", bio.welcomeMessage);
-    $("#header").append(formattedWelcomeMsg);
-
-    if (bio.skills) {
-        $("#header").append(HTMLskillsStart);
-        var formattedSkill;
-        var skillsArr = Object.keys(bio.skills);
-        var skillList = "";
-        for (var i = 0, size = skillsArr.length; i < size; i += 1) {
-            skillList += bio.skills[skillsArr[i]].join(", ");
-            formattedSkill = HTMLskills.replace("%data%", skillList).replace("%header%", skillsArr[i]);
-            $("#skills").append(formattedSkill);
-            skillList = "";
-        }
-    }
-
-    if (bio.contacts) {
-        var zocialClassList;
-        var socialMediaContact;
-        var formattedContact;
-
-        $.each(bio.contacts, function(key, value) {
-            zocialClassList = zocialMediaClassMap[key];
-            socialMediaContact = socialMediaLinkMap[key];
-            formattedContact = HTMLcontactGenericwithClass.replace("%data%", value)
-                .replace("%class%", zocialClassList).replace("%link%", socialMediaContact);
-            $("#topContacts, #footerContacts").append(formattedContact);
-        });
-    }
-};
-
-var education = {
-    "schools": [{
-        "name": "Stevens Institute of Technology",
-        "degree": "Bachelor's of Science",
-        "majors": ["Computer Science"],
-        "dates": "1999 - 2005",
-        "location": "Hoboken, NJ",
-        "url": "http://www.stevens.edu"
-    }],
-    "onlineCourses": [{
-        "title": "Front End Web Developer Nanodegree",
-        "school": "Udacity",
-        "dates": "2017",
-        "url": "https://www.udacity.com/course/front-end-web-developer-nanodegree--nd001"
-    }]
-};
-
-education.display = function() {
-    "use strict";
-    $("#education").append(HTMLschoolStart);
-
-    var schools = education.schools;
-    var formattedSchool;
-    var formattedDegree;
-    var formattedDegreeAndSchool;
-    var formattedDates;
-    var formattedSchoolLocation;
-    var formattedSchoolMajor;
-
-    for (var i = 0; i < schools.length; i += 1) {
-        formattedSchool = HTMLschoolName.replace("%data%", schools[i].name).replace("#", schools[i].url);
-        formattedDegree = HTMLschoolDegree.replace("%data%", schools[i].degree);
-        formattedDegreeAndSchool = formattedSchool + formattedDegree;
-        $(".education-entry:last").append(formattedDegreeAndSchool);
-
-        formattedDates = HTMLschoolDates.replace("%data%", schools[i].dates);
-        $(".education-entry:last").append(formattedDates);
-
-        formattedSchoolLocation = HTMLschoolLocation.replace("%data%", schools[i].location);
-        $(".education-entry:last").append(formattedSchoolLocation);
-
-        var majors = schools[i].majors;
-        for (var k = 0; k < majors.length; k++) {
-            formattedSchoolMajor = HTMLschoolMajor.replace("%data%", majors[k]);
-            $(".education-entry:last").append(formattedSchoolMajor);
-        }
-    }
-
-    $(".education-entry:last").append(HTMLonlineClasses);
-
-    var formattedTitle;
-    var formattedTitleAndSchool;
-    var formattedURL;
-    for (var j = 0; j < education.onlineCourses.length; j += 1) {
-        formattedTitle = HTMLschoolName.replace("%data%", education.onlineCourses[j].title).replace("#", education.onlineCourses[j].url);
-        formattedSchool = HTMLschoolDegree.replace("%data%", education.onlineCourses[j].school);
-        formattedTitleAndSchool = formattedTitle + formattedSchool;
-        $(".education-entry:last").append(formattedTitleAndSchool);
-
-        formattedDates = HTMLonlineDates.replace("%data%", education.onlineCourses[j].dates);
-        $(".education-entry:last").append(formattedDates);
-
-        formattedURL = HTMLonlineURL.replace("%data%", education.onlineCourses[j].url).replace("#", education.onlineCourses[j].url);
-        $(".education-entry:last").append(formattedURL);
-    }
-};
-
-var work = {
-    "jobs": [{
-        "title": "Software Developer",
-        "employer": "Financial Sciences",
-        "dates": "2/2005 - Current",
-        "location": "Jersey City, NJ",
-        "description": "I'm a full stack web developer who spends much of his time developing and enhancing applications and technical processes. Overall, I've worked on functional development and implementation of trade managers and reporting tools as part of fixed income, market data and cash management applications. My primary skills are Javascript, HTML, CSS, SQL and Java."
-    }, {
-        "title": "Software Developer",
-        "employer": "Hertz",
-        "dates": "1/2003 - 9/2003",
-        "location": "Park Ridge, NJ",
-        "description": "Updated and maintained company intranet and internet sites using Coldfusion, HTML, CSS, and JS."
-    }, {
-        "title": "Software Development Intern",
-        "employer": "Citigroup",
-        "dates": "5/2001 - 9/2001",
-        "location": "Weehawken, NJ",
-        "description": "Created and maintained company intranet and site using Coldfusion, HTML, CSS, and JS."
-    }]
-};
-
-work.display = function() {
-    "use strict";
-
-    var formattedEmployer;
-    var formattedWorkTitle;
-    var formattedEmployerTitle;
-    var formattedJobDates;
-    var formattedJobLocation;
-    var formattedJobDescription;
-
-    for (var i = 0; i < work.jobs.length; i += 1) {
-        $("#workExperience").append(HTMLworkStart);
-
-        formattedEmployer = HTMLworkEmployer.replace("%data%", work.jobs[i].employer);
-        formattedWorkTitle = HTMLworkTitle.replace("%data%", work.jobs[i].title);
-        formattedEmployerTitle = formattedEmployer + formattedWorkTitle;
-        $(".work-entry:last").append(formattedEmployerTitle);
-
-        formattedJobDates = HTMLworkDates.replace("%data%", work.jobs[i].dates);
-        $(".work-entry:last").append(formattedJobDates);
-
-        formattedJobLocation = HTMLworkLocation.replace("%data%", work.jobs[i].location);
-        $(".work-entry:last").append(formattedJobLocation);
-
-        formattedJobDescription = HTMLworkDescription.replace("%data%", work.jobs[i].description);
-        $(".work-entry:last").append(formattedJobDescription);
-    }
-};
-
-var projects = {
-    projects: [{
-        "title": "Build a Portfolio Site",
-        "dates": "2017",
-        "description": "A site to display all my projects.",
-        "images": ["images/197x148.gif"]
-    }, {
-        "title": "Interactive Resume",
-        "dates": "2017",
-        "description": "A resume to display my projects and work history.",
-        "images": ["images/197x148.gif"]
-    }, {
-        "title": "Classic Arcade Game Clone",
-        "dates": "2017",
-        "description": "A clone of a classic arcade game.",
-        "images": ["images/197x148.gif"]
-    }, {
-        "title": "Website Optimization",
-        "dates": "2017",
-        "description": "Optimizing my portfolio site.",
-        "images": ["images/197x148.gif"]
-    }, {
-        "title": "Neighborhood Map",
-        "dates": "2017",
-        "description": "A map of my neighborhood.",
-        "images": ["images/197x148.gif"]
-    }, {
-        "title": "Feed Reader Testing",
-        "dates": "2017",
-        "description": "Automated testing of a feed reader.",
-        "images": ["images/197x148.gif"]
-    }]
-};
-
-projects.display = function() {
-    "use strict";
-    $("#projects").append(HTMLprojectStart);
-
-    var projArray = projects.projects;
-    var formattedProjectTitle;
-    var formattedProjectDates;
-    var formattedProjectDescription;
-
-    for (var i = 0; i < projArray.length; i += 1) {
-        formattedProjectTitle = HTMLprojectTitle.replace("%data%", projArray[i].title);
-        $("#projects").append(formattedProjectTitle);
-
-        formattedProjectDates = HTMLprojectDates.replace("%data%", projArray[i].dates);
-        $("#projects").append(formattedProjectDates);
-
-        formattedProjectDescription = HTMLprojectDescription.replace("%data%", projArray[i].description);
-        $("#projects").append(formattedProjectDescription);
-
-        var formattedProjectImage;
-        for (var image = 0; image < projArray[image].images.length; image++) {
-            var projectImagesArr = projArray[image].images;
-            for (var k = 0; k < projectImagesArr.length; k++) {
-                formattedProjectImage = HTMLprojectImage.replace("%data%", projectImagesArr[k]);
-                $("#projects").append(formattedProjectImage);
-            }
-        }
-    }
-};
-
-$("#mapDiv").append(googleMap);
-
-function displayInformation() {
-    bio.display();
-    education.display();
-    work.display();
-    projects.display();
+function initResume() {
+    $("#mapDiv").append(googleMap);
+    resume = new Resume();
+    ko.applyBindings(resume);
 }
+
