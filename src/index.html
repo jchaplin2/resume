@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jonathan Chaplin's Resume : Front-End Web Developer</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="./css/zocial.css" rel="stylesheet">
+    <script src="js/resumeBuilder.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js" onerror="loadError()" > </script>
+    <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCee4T47HDTSz-159WzySEB_2R8xAgkUSk"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+    <main id="main">
+
+        <nav style="position: fixed;left:0;right:0;top:0;z-index: 100; background-color: #21606C">
+          <ul style="list-style-type: none">
+            <li style="display: inline-block;width: 24%;text-align: center">
+              <a style="font-family: Lato, sans-serif;font-weight: bold; color: white" href="#workExperience">Work </a>
+            </li>
+            <li style="display: inline-block;width: 24%;text-align: center">
+              <a style="font-family: Lato, sans-serif;font-weight: bold; color: white" href="#projects">Projects </a>
+            </li>
+            <li style="display: inline-block;width: 24%;text-align: center">
+              <a style="font-family: Lato, sans-serif;font-weight: bold; color: white" href="#education">Education </a>
+            </li>
+            <li style="display: inline-block;width: 24%;text-align: center">
+              <a style="font-family: Lato, sans-serif;font-weight: bold; color: white" href="#lets-connect">Locations </a>
+            </li>
+          </ul>
+        </nav>
+
+        <header id="header" class="center-content clear-fix" data-bind="with: bio" >
+            <ul id="topContacts" class="flex-box" data-bind="foreach: contacts" >
+              <li data-bind="attr : {class : className}"  style="z-index: 1">
+                <a href="" class="white-text contact-link-item" target="_blank" data-bind="attr:{href : url}, text:name"  ></a>
+              </li>
+            </ul>
+            <img data-bind="attr: { src: biopic}" src="" class="biopic" />
+            <h1 id="name" data-bind="text: name">  </h1>
+            <h3 data-bind="text: role"> </h3>
+            <hr>
+            <span class="welcome-message" data-bind="text: welcomeMessage"> </span>
+            <h3 id="skills-h3">Skills at a Glance:</h3>
+            <ul id="skills" class="flex-column">
+              <li class="flex-item"> Languages <span class="white-text" data-bind="text: languages"> </span> </li>
+              <li class="flex-item"> Frameworks/Libraries <span class="white-text" data-bind="text: libraries"> </span> </li>
+              <li class="flex-item"> Other <span class="white-text" data-bind="text: other"> </span> </li>
+              <li class="flex-item"> Version Control <span class="white-text" data-bind="text: versionControl"> </span> </li>
+              <li class="flex-item"> Editors <span class="white-text" data-bind="text: editors"> </span> </li>
+            </ul>
+        </header>
+        <section style="clear: both;"></section>
+
+        <section name="workExperience" id="workExperience" style="padding-top: 20px" >
+          <h2>Work Experience</h2>
+          <!-- ko foreach: jobs-->
+          <div class="work-entry">
+            <a class="external-page-link" target="_blank" data-bind="attr:{href : url}, text:jobTitle"> </a>
+            <div class="date-text" data-bind="text : dates"> </div>
+            <div class="location-text" data-bind="text : location"> </div>
+            <br/>
+            <p class="description" data-bind="text : description"></p>
+          </div>
+          <!-- /ko -->
+        </section>
+
+        <section name="projects" id="projects"  style="padding-top: 20px" >
+          <h2> Projects </h2>
+          <!-- TODO responsive images -->
+          <div class="project-container" >
+          <!-- ko foreach: projects -->
+              <div class="project-entry" >
+                <a class="external-page-link" href="" target="_blank" data-bind="attr:{href : url}, text: title">  </a>
+                <div class="date-text" data-bind="text : dates"> </div>
+                <br/>
+                <p data-bind="text : description"> </p>
+                <img width="209" height="100" data-bind="attr: { src: images[0]}" />
+              </div>
+          <!-- /ko --> 
+          </div>
+        </section>
+
+        <section name="education" id="education" class="gray" style="padding-top: 20px" >
+          <h2>Education</h2>
+          <div class="education-entry" data-bind="with: education">
+            <!-- ko foreach: schools -->
+              <a class="external-page-link" href="" target="_blank" data-bind="attr:{href : url}, text: title">  </a>
+              <div class="date-text" data-bind="text: dates" ></div>
+              <div class="location-text" data-bind="text: location"></div>
+              <br>
+              <em data-bind="text: majors"><br>Major: </em>
+            <!-- /ko -->
+            <h3> Online Courses </h3>
+            <!-- ko foreach: onlineCourses -->
+              <a href="#" class="external-page-link" target="_blank" data-bind="attr:{href : url}, text: title">  </a>
+              <div class="date-text" data-bind="text: dates" ></div>
+              <br/>
+            <!-- /ko -->
+          </div>
+        </section>
+
+        <section id="mapDiv">
+            <h2>Where I've Lived and Worked</h2>
+        </section>
+        <section name="lets-connect" id="lets-connect" data-bind="with: bio" style="padding-top: 20px">
+            <h2 class="dark-blue center-text">Let's Connect</h2>
+            <ul id="footerContacts" class="flex-box" data-bind="foreach: contacts">
+              <li data-bind="attr : {class : className}">
+                <a href="" class="white-text contact-link-item" target="_blank" data-bind="attr:{href : url}, text:name"></a>
+              </li>
+            </ul>
+        </section>
+    </main>
+
+    <!--
+  jQuery is a common JavaScript library for reading and making changes to the
+  Document Object Model (DOM). The DOM is a tree that contains information
+  about what is actually visible on a website.
+
+  While HTML is a static document, the browser converts HTML to the
+  DOM and the DOM can change. In fact, JavaScript's power comes from
+  its ability to manipulate the DOM, which is essentially a JavaScript
+  object. When JavaScript makes something interesting happen on a
+  website, it's likely the action happened because JavaScript changed
+  the DOM. jQuery is fast and easy to use, but it doesn't do anything
+  you can't accomplish with vanilla (regular) JavaScript.
+  -->
+    <script src="http://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
+    <script>
+      WebFont.load({
+        google: {
+          families: ['Lato:100,300']
+        }
+      });
+      $(document).ready(function() {
+          init();
+      });
+    </script>
+</body>
+</html>
