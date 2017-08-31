@@ -28,9 +28,8 @@ body {
   flex-wrap: wrap;
 }
 
-.project-entry{
+.project-entry {
     width: 27%;
-    cursor: pointer;
 }
 
 .education-entry,

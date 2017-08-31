@@ -235,7 +235,7 @@ var Resume = function() {
             "title": "Interactive Resume",
             "dates": "2017",
             "description": "An online resume",
-            "images": ["images/197x148-210.gif"],
+            "images": ["images/resume-210.png"],
             "url":"https://github.com/jchaplin2/resume"
         });
 
