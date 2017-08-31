@@ -19,6 +19,31 @@ body {
     color: white;
 }
 
+.menu-nav {
+  position: fixed;
+  left:0;
+  right:0;
+  top:0;
+  z-index: 100;
+  background-color: #21606C;
+}
+
+.menu-list {
+  list-style-type: none;
+}
+
+.menu-list-item {
+  display: inline-block;
+  width: 24%;
+  text-align: center;
+}
+
+.menu-list-link {
+  font-family: Lato, sans-serif;
+  font-weight: bold;
+  color: white;
+}
+
 .clear-fix {
   overflow: auto;
 }
