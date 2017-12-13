@@ -9,6 +9,12 @@ A full responsive resume detailing my work & education history.
 * Install and execute grunt: npm install -g grunt-cli
 * Open dist/index.html in a web browser.
 
+## How to Use
+* This project is responsive so it can be viewed on any device.
+* Clicking on any project link takes you to the github repo
+* Clicking on any of the headers takes you to that individual section.
+* Clicking on any of the map markers displays location information.
+
 # Demo
 [Demo](https://jchaplin2.github.io/resume/index.html)
 
