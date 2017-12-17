@@ -357,7 +357,6 @@ var Resume = function() {
             " JavaScript",
             " CSS",
             " Java",
-            " JQuery",
             " SQL"
         ]);
         this.libraries = ko.observableArray([
@@ -373,6 +372,7 @@ var Resume = function() {
             " Responsive Design",
             " Unix",
             " Linux",
+            " TDD / BDD",
             " Windows 10",
             " Oracle 11g",
         ]);
