@@ -388,7 +388,7 @@ var Resume = function() {
             {"name" : "jchaplin2", "url":"https://twitter.com/jchaplin2", "className":"flex-item zocial-twitter"},
             {"name" : "jchaplin2", "url":"https://github.com/jchaplin2", "className":"flex-item zocial-github"},
             {"name" : "jrchaplin", "url":"https://www.linkedin.com/in/jrchaplin/", "className":"flex-item zocial-linkedin"},
-            {"name" : "Weehawken, NJ", "url":"#", "class":"flex-item zocial-pinboard", "className":"flex-item zocial-pinboard"},
+            {"name" : "Paramus, NJ", "url":"#", "class":"flex-item zocial-pinboard", "className":"flex-item zocial-pinboard"},
         ];
     };
 
